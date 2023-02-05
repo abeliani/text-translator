@@ -1,0 +1,30 @@
+{
+    "name": "abeliani/string-translator",
+    "type": "project",
+    "license": "MIT",
+    "homepage": "https://treecode.ru",
+    "authors": [
+        {
+            "name": "Anatolii Belianin"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Abeliani\\StringTranslator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abeliani\\StringTranslator\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.0",
+        "guzzlehttp/guzzle": "7.0"
+    },
+    "require-dev": {
+        "codeception/codeception": "4.1.29",
+        "codeception/specify": "2.0"
+    }
+}
