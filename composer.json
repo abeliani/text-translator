@@ -1,6 +1,6 @@
 {
     "name": "abeliani/string-translator",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "homepage": "https://treecode.ru",
     "authors": [
