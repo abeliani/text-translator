@@ -18,13 +18,13 @@
             "Abeliani\\StringTranslator\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "^8.0",
         "ext-http": "*"
     },
     "require-dev": {
-        "codeception/codeception": "^4.1.29",
+        "codeception/codeception": "^4.1",
         "codeception/specify": "^2.0"
     }
 }
