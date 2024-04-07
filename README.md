@@ -1,9 +1,10 @@
 # StringTranslator
-Performs translation of the received string through the remote services 
+Translates the received text using various services 
 
 ## Supported services
-* [Yandex](https://yandex.com/dev/translate)
 * [MyMemory](https://mymemory.translated.net)
+* Offline transliteration
+* Offline bijective transliteration
 
 ## Install
 ```
@@ -11,37 +12,30 @@ composer require abeliani/string-translator
 ```
 
 ## Usage
-You can use static method of StringTranslator class
+Online drivers need to pass psr7 client and request objects
+
 ```
-...
-use StringTranslator\StringTranslator;
-use StringTranslator\Drivers\MyMemoryDriver;
-...
+$driver = new MyMemoryDriver('token', $psr7Client, $psr7Request);
+$translator = new TextTranslator($driver);
 
-// We will be use MyMemory service for our example
-$driver = new MyMemoryDriver();
-$translatedText = StringTranslator::translate($textToTranslate, 'en', 'gb', $driver)
+// set text and it languge code
+$translator->setSource('some text', 'en')
 
-// Here is the translated text
-print $translatedText;
+// Here will be the translated text
+print $translator->translate('ge');
 ```
 Translate the text to many languages
 ```
+print $translator->translate('fr');
 ...
-$translator = StringTranslator::prepareTranslator($someText, 'en', $driver);
-$translatedText1 = $translator->translate('gb');
-$translatedText2 = $translator->translate('tr');
+print $translator->translate('tr');
 ```
 
-You can call drivers in a chain. if the free request limit is reached in one driver (or got any error), the next request will be direct to the next driver.
+Chain of driver calls. We can pass the driver into the chain, which will be called if the previous one does not complete the translation.
 ```
-use StringTranslator\Drivers\YandexDriver;
-use StringTranslator\Drivers\MyMemoryDriver;
-...
-
-$driver = new YandexDriver($apiKey, new MyMemoryDriver());
-$translatedText = StringTranslator::translate($textToTranslate, 'en', 'gb', $driver)
+$driver = new OneDriver($apiKey, $psr7Client, $psr7Request, new TwoDriver($apiKey, $psr7Client, $psr7Request));
+$translator = new TextTranslator($driver);
 ```
 
 
-Package [homepage](https://treecode.ru)
+Package [homepage](https://treecode.ru/article/4/text-translator-transilterator-library)

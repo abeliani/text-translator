@@ -1,6 +1,6 @@
 {
     "name": "abeliani/string-translator",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "homepage": "https://treecode.ru",
     "authors": [
@@ -21,10 +21,10 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.0",
-        "guzzlehttp/guzzle": "7.0"
+        "ext-http": "*"
     },
     "require-dev": {
-        "codeception/codeception": "4.1.29",
-        "codeception/specify": "2.0"
+        "codeception/codeception": "^4.1.29",
+        "codeception/specify": "^2.0"
     }
 }

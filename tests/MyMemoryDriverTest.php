@@ -2,113 +2,119 @@
 
 namespace Abeliani\StringTranslator\Tests;
 
-use Abeliani\StringTranslator\Drivers\MyMemoryDriver;
+use Abeliani\StringTranslator\Drivers\Core\DriverException;
+use Abeliani\StringTranslator\Drivers\MyMemory;
 use Codeception\Specify;
 use Codeception\Test\Unit;
 use GuzzleHttp\Client;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 class MyMemoryDriverTest extends Unit
 {
     use Specify;
 
+    private Client $client;
+    private StreamInterface $stream;
+    private RequestInterface $request;
+    private ResponseInterface $response;
+
+    protected function setUp(): void
+    {
+        $uri =  $this->createStub(UriInterface::class);
+        $uri->method('withScheme')
+            ->willReturnSelf();
+        $uri->method('withHost')
+            ->willReturnSelf();
+        $uri->method('withPath')
+            ->willReturnSelf();
+        $uri->method('withQuery')
+            ->willReturnSelf();
+
+        $this->request = $this->createStub(RequestInterface::class);
+        $this->request->method('getUri')
+            ->willReturn($uri);
+        $this->request->method('withUri')
+            ->willReturnSelf();
+        $this->request->method('withMethod')
+            ->willReturnSelf();
+
+        $this->client = $this->createStub(Client::class);
+        $this->stream = $this->createStub(StreamInterface::class);
+        $this->response = $this->createStub(ResponseInterface::class);
+
+        parent::setUp();
+    }
+
     public function testSuccess(): void
     {
-        $stream = $this->createStub(StreamInterface::class);
-        $stream->method('getContents')
-            ->willReturn('{"responseData": {"translatedText": "Bar."}}');
+        $this->stream->method('getContents')
+            ->willReturn('{"responseData": {"translatedText": "Test."}}');
 
-        $response = $this->createStub(ResponseInterface::class);
-        $response->method('getBody')
-            ->willReturn($stream);
-        $response->method('getStatusCode')
+        $this->response->method('getBody')
+            ->willReturn($this->stream);
+        $this->response->method('getStatusCode')
             ->willReturn(200);
 
-        $client = $this->createStub(Client::class);
-        $client->method('get')
-            ->willReturn($response);
+        $this->client->method('sendRequest')
+            ->willReturn($this->response);
 
-        $this->specify('Clear dot after translated text', function () use ($client) {
-            $driver = (new MyMemoryDriver())
-                ->init($client)
-                ->setTranslatable('Foo', 'tr');
+        $this->specify('Clear dot after translated text', function () {
+            $result = (new MyMemory('', $this->client, $this->request))
+                ->handle('Тест', 'ru', 'en');
 
-            $this->assertEquals('Bar', $driver->translate('en'));
+            $this->assertEquals('Test', $result);
         });
 
-        $this->specify('Nothing to translate', function () use ($client) {
-            $driver = (new MyMemoryDriver())
-                ->init($client)
-                ->setTranslatable('123', 'tr');
+        $this->specify('Keep dot after translated text', function () {
+            $result = (new MyMemory('', $this->client, $this->request))
+                ->handle('Тест.', 'ru', 'en');
 
-            $this->assertEquals('123', $driver->translate('en'));
+            $this->assertEquals('Test.', $result);
+        });
+
+        $this->specify('Nothing to translate', function () {
+            $result = (new MyMemory('', $this->client, $this->request))
+                ->handle('123', 'ru', 'en');
+
+            $this->assertEquals('123', $result);
         });
     }
 
     public function testFail(): void
     {
-        $stream = $this->createStub(StreamInterface::class);
-        $stream->method('getContents')
+        $this->expectException(DriverException::class);
+
+        $this->stream->method('getContents')
             ->willReturn('{"responseData": {"wrongResponse": "Error"}}');
 
-        $response = $this->createStub(ResponseInterface::class);
-        $response->method('getBody')
-            ->willReturn($stream);
-
-        $response->method('getStatusCode')
+        $this->response->method('getBody')
+            ->willReturn($this->stream);
+        $this->response->method('getStatusCode')
             ->willReturn(200);
 
-        $client = $this->createStub(Client::class);
-        $client->method('get')
-            ->willReturn($response);
+        $this->client->method('sendRequest')
+            ->willReturn($this->response);
 
-        $client = $this->createStub(Client::class);
-        $driver = (new MyMemoryDriver())
-            ->init($client)
-            ->setTranslatable('Foo', 'tr');
-
-        $this->assertNull($driver->translate('en'));
-    }
-
-    public function testWrongResponse(): void
-    {
-        $stream = $this->createStub(StreamInterface::class);
-        $stream->method('getContents')
-            ->willReturn('{"responseData": {"wrongResponse": "Error"}}');
-
-        $response = $this->createStub(ResponseInterface::class);
-        $response->method('getBody')
-            ->willReturn($stream);
-
-        $response->method('getStatusCode')
-            ->willReturn(200);
-
-        $client = $this->createStub(Client::class);
-        $client->method('get')
-            ->willReturn($response);
-
-        $driver = (new MyMemoryDriver())
-            ->init($client)
-            ->setTranslatable('Foo', 'tr');
-
-        $this->assertNull($driver->translate('en'));
+        (new MyMemory('', $this->client, $this->request))
+            ->handle('Foo', 'tr', 'ge');
     }
 
     public function testErrorStatusCode(): void
     {
-        $response = $this->createStub(ResponseInterface::class);
-        $response->method('getStatusCode')
+        $this->expectException(DriverException::class);
+
+        $this->response->method('getBody')
+            ->willReturn($this->stream);
+        $this->response->method('getStatusCode')
             ->willReturn(500);
 
-        $client = $this->createStub(Client::class);
-        $client->method('get')
-            ->willReturn($response);
+        $this->client->method('sendRequest')
+            ->willReturn($this->response);
 
-        $driver = (new MyMemoryDriver())
-            ->init($client)
-            ->setTranslatable('Foo', 'tr');
-
-        $this->assertNull($driver->translate('en'));
+        (new MyMemory('', $this->client, $this->request))
+            ->handle('Foo', 'tr', 'ge');
     }
 }
