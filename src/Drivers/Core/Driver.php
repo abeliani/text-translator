@@ -11,13 +11,19 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * @throws DriverException
+     * @throws DriverException|\Exception
      */
     public function handle(string $text, string $from, string $to): string
     {
-        $processed = $this->processing($text, $from, $to);
+        try {
+            $processed = $this->processing($text, $from, $to);
+        } catch (DriverException $e) {
+            if (!$this->hasNextDriver()) {
+                throw $e;
+            }
+        }
 
-        if (empty($processed) && $this->successor !== null) {
+        if (empty($processed) && $this->hasNextDriver()) {
             $processed = $this->successor->processing($text, $from, $to);
         }
 
@@ -28,5 +34,13 @@ abstract class Driver implements DriverInterface
         return $processed;
     }
 
+    /**
+     * @throws DriverException|\Exception
+     */
     abstract protected function processing(string $text, string $from, string $to): ?string;
+
+    private function hasNextDriver(): bool
+    {
+        return $this->successor !== null;
+    }
 }

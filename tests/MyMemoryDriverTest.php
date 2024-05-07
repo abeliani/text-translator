@@ -51,7 +51,7 @@ class MyMemoryDriverTest extends Unit
     public function testSuccess(): void
     {
         $this->stream->method('getContents')
-            ->willReturn('{"responseData": {"translatedText": "Test."}}');
+            ->willReturn('{"responseData": {"translatedText": "Test."}, "responseStatus": 200}');
 
         $this->response->method('getBody')
             ->willReturn($this->stream);

@@ -25,6 +25,12 @@ final class Translit extends Core\Driver
                 . DIRECTORY_SEPARATOR
                 . 'translit.php';
 
+            if (!empty($langMap)) {
+                foreach ($langMap as $pair => $map) {
+                    $this->langMap[$pair] = $map;
+                }
+            }
+
             $this->langMap = $this->addUpperCase($this->langMap);
         }
 

@@ -66,7 +66,7 @@ class DriverChainTest extends Unit
 
         $body = $this->createStub(StreamInterface::class);
         $body->method('getContents')
-            ->willReturn('{"responseData":{"translatedText":"Привет Мир!","match":1}}');
+            ->willReturn('{"responseData":{"translatedText":"Привет Мир!","match":1}, "responseStatus": 200}');
 
         $this->response->method('getBody')
             ->willReturn($body);

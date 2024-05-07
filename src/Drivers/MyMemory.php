@@ -10,7 +10,6 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * key d0cf9a3e0a60f8e1e880
  * @see https://mymemory.translated.net
  */
 final class MyMemory extends Core\OnlineDriver
@@ -50,7 +49,7 @@ final class MyMemory extends Core\OnlineDriver
         }
 
         $query = sprintf(
-            'q=%s%s&langpair=%s|%s', ($this->apiKey ? "key={$this->apiKey}&" : ''), urlencode($text), $from, $to
+            'q=%s%slangpair=%s|%s', urlencode($text), ($this->apiKey ? "&key={$this->apiKey}&" : ''), $from, $to
         );
 
         $request = $this->request
@@ -67,13 +66,14 @@ final class MyMemory extends Core\OnlineDriver
         }
 
         $body = $response->getBody()->getContents();
-        $parsedBody = json_decode($body, true,112,JSON_THROW_ON_ERROR);
+        $parsedBody = json_decode($body, true, 112, JSON_THROW_ON_ERROR);
 
-        if (!isset($parsedBody['responseData']['translatedText'])) {
-            throw new Core\DriverException(
-                "Failed to parse mymemory response: {$body}",
-                500
-            );
+        if (!isset($parsedBody['responseData']['translatedText']) || !isset($parsedBody['responseStatus'])) {
+            throw new Core\DriverException("Failed to parse mymemory response: {$body}");
+        }
+
+        if ($parsedBody['responseStatus'] === 403) {
+            throw new Core\DriverException('Wrong api key');
         }
 
         if (!str_ends_with($text, '.')) {
