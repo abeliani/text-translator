@@ -1,12 +1,26 @@
 <?php
 
+/**
+ * This file is part of the StringTranslator Project.
+ *
+ * @package     StringTranslator
+ * @author      Anatolii Belianin <belianianatoli@gmail.com>
+ * @license     See LICENSE.md for license information
+ * @link        https://github.com/abeliani/string-translator
+ */
+
 declare(strict_types=1);
 
 namespace Abeliani\StringTranslator\Drivers\Core;
 
 abstract class Driver implements DriverInterface
 {
-    public function __construct(protected ?DriverInterface $successor = null)
+    /**
+     * Abstract Driver to implement chain of responsibility
+     *
+     * @param DriverInterface|null $successor
+     */
+    public function __construct(protected readonly ?DriverInterface $successor = null)
     {
     }
 

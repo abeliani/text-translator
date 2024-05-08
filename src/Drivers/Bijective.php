@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the StringTranslator Project.
+ *
+ * @package     StringTranslator
+ * @author      Anatolii Belianin <belianianatoli@gmail.com>
+ * @license     See LICENSE.md for license information
+ * @link        https://github.com/abeliani/string-translator
+ */
+
 declare(strict_types=1);
 
 namespace Abeliani\StringTranslator\Drivers;
@@ -21,6 +30,17 @@ class Bijective extends Core\Driver
         self::EN,
     ];
 
+    /**
+     * Creates a readable and decodable hash
+     *      Борщ -> Borw_
+     *      Borw_ -> Борщ
+     *
+     * For example. It can be used to create an url slug for tags.
+     *
+     * @param array|null $langMap - custom bijective map
+     * @param bool $onlyWordsAllow - to deny using non words chars
+     * @param Core\DriverInterface|null $successor - instance of next driver if current fail
+     */
     public function __construct(
         ?array $langMap = null,
         private readonly bool $onlyWordsAllow = false,

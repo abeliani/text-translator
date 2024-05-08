@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the StringTranslator Project.
+ *
+ * @package     StringTranslator
+ * @author      Anatolii Belianin <belianianatoli@gmail.com>
+ * @license     See LICENSE.md for license information
+ * @link        https://github.com/abeliani/string-translator
+ */
+
 declare(strict_types=1);
 
 namespace Abeliani\StringTranslator\Drivers;
@@ -14,6 +23,15 @@ final class Translit extends Core\Driver
 
     private array $langMap;
 
+    /**
+     * Transliterate text by map
+     *
+     *      Борщ -> Borsch
+     *      Ночь -> Noch
+     *
+     * @param array|null $langMap - custom translit map
+     * @param Core\DriverInterface|null $successor - instance of next driver if current fail
+     */
     public function __construct(
         ?array $langMap = null,
         ?Core\DriverInterface $successor = null,
