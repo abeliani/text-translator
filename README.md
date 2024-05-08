@@ -12,7 +12,7 @@ composer require abeliani/string-translator
 ```
 
 ## Usage
-Online drivers need to pass psr7 client and request objects
+Online drivers need to pass implemented psr7 client and request instances
 
 ```
 $driver = new MyMemoryDriver('token', $psr7Client, $psr7Request);
@@ -27,7 +27,7 @@ print $translator->translate('ge');
 Translate the text to many languages
 ```
 print $translator->translate('fr');
-...
+// ...
 print $translator->translate('tr');
 ```
 
@@ -37,5 +37,6 @@ $driver = new OneDriver($apiKey, $psr7Client, $psr7Request, new TwoDriver($apiKe
 $translator = new TextTranslator($driver);
 ```
 
+Feel free to request the creation of a new dictionary, service, or send a pull request for your dictionary or service of online translator.
 
 Package [homepage](https://treecode.ru/article/4/text-translator-transilterator-library)
