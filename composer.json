@@ -1,8 +1,9 @@
 {
     "name": "abeliani/string-translator",
+    "description": "Translates the received text using various services",
+    "homepage": "https://treecode.ru",
     "type": "library",
     "license": "MIT",
-    "homepage": "https://treecode.ru",
     "authors": [
         {
             "name": "Anatolii Belianin"
@@ -20,7 +21,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^8",
+        "php": "^8.1",
         "ext-http": "*"
     },
     "require-dev": {
